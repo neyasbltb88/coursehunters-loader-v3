@@ -1,0 +1,49 @@
+{
+    "name": "coursehunters-loader",
+    "version": "1.0.0",
+    "description": "Проект для скачивания курсов с coursehunter.net",
+    "scripts": {
+        "dev": "cross-env NODE_ENV=development webpack-dev-server",
+        "build": "cross-env NODE_ENV=production webpack",
+        "dev:client": "cross-env NODE_ENV=development webpack-dev-server --config hot/webpack.config.js",
+        "build:client": "cross-env NODE_ENV=production webpack --config hot/webpack.config.js && rm index.html",
+        "clear": "rm -r dist/ && rm stats.json"
+    },
+    "keywords": [
+        "coursehunter-loader",
+        "coursehunter",
+        "lessons-download",
+        "coursehunter-download"
+    ],
+    "author": "neyasbltb_88",
+    "license": "ISC",
+    "devDependencies": {
+        "@babel/core": "^7.6.3",
+        "@babel/plugin-proposal-class-properties": "^7.5.5",
+        "@babel/plugin-syntax-jsx": "^7.2.0",
+        "@babel/plugin-transform-react-jsx": "^7.3.0",
+        "@babel/preset-env": "^7.6.3",
+        "babel-loader": "^8.0.6",
+        "copy-webpack-plugin": "^5.0.4",
+        "cross-env": "^6.0.3",
+        "css-loader": "^3.2.0",
+        "file-loader": "^4.2.0",
+        "node-sass": "^4.12.0",
+        "raw-loader": "^3.1.0",
+        "sass-loader": "^8.0.0",
+        "style-loader": "^1.0.0",
+        "url-loader": "^2.2.0",
+        "vue-loader": "^15.7.1",
+        "vue-style-loader": "^4.1.2",
+        "vue-template-compiler": "^2.6.10",
+        "webpack": "^4.41.0",
+        "webpack-cli": "^3.3.9",
+        "webpack-custom-hot-update-strategy": "^1.0.1",
+        "webpack-dev-server": "^3.8.2"
+    },
+    "dependencies": {
+        "downloadjs": "^1.4.7",
+        "vue": "^2.6.10",
+        "vuex": "^3.1.1"
+    }
+}
