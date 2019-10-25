@@ -1,9 +1,9 @@
 import Utils from '../utils';
-import InfoPageCollector from './info-page-collector';
 
 export default class Collectors {
     static async collectLessonsData(storage) {
-        let lesson_elems = document.querySelectorAll('.lessons-item');
+        let lessons_list = document.querySelector('#lessons-list');
+        let lesson_elems = lessons_list.querySelectorAll('.lessons-item');
         let result_items = [];
 
         lesson_elems.forEach((elem, index) => {
@@ -60,32 +60,5 @@ export default class Collectors {
         };
 
         return material_item;
-    }
-
-    static async collectInfoPage(storage, index, course_name) {
-        let infoPageCollector = new InfoPageCollector();
-        let restore_info_page_item = storage.get('info');
-
-        let info_page_item = {
-            index,
-            name_prefix: 'Инфо о курсе',
-            name_concat: ' - ',
-            lesson_name: Utils.fileNameNormalize(course_name),
-            storage_name: 'info',
-            url: null,
-            ext: 'html',
-            content: null,
-            collect_method: infoPageCollector.build.bind(infoPageCollector),
-            mime: 'text/html',
-            total: restore_info_page_item ? +restore_info_page_item : 0,
-            loaded: restore_info_page_item ? +restore_info_page_item : 0,
-            percent: restore_info_page_item ? 100 : 0,
-            is_checked: true,
-            is_loading: false,
-            is_loaded: restore_info_page_item ? true : false,
-            was_loaded: restore_info_page_item ? true : false
-        };
-
-        return info_page_item;
     }
 }

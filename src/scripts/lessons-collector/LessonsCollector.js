@@ -1,12 +1,26 @@
-import Download from '../download';
+import Download from 'downloadjs';
 import Utils from '../utils';
+import SStorage from '../sstorage';
+import Collectors from './collectors';
 
 export default class LessonsCollector {
     constructor() {
-        this.btn = null;
-        this.lessonsListEl = null;
+        this.json = {
+            course_name: '',
+            course_display_name: '',
+            lesson_items: []
+        };
+        this.storage = null;
 
         this.init();
+    }
+
+    get cnt() {
+        return this.json.lesson_items.length;
+    }
+
+    get getCourseDisplayName() {
+        return this.json.course_display_name;
     }
 
     createBtn() {
@@ -19,49 +33,60 @@ export default class LessonsCollector {
         lessonsToggleBtn.after(this.btn);
     }
 
-    collectMaterials(course_name) {
-        let materials_btn = document.querySelector('[title="Download course materials"]');
-        let materialsItem = {
-            [materials_btn.href]: `Материалы курса - ${course_name}.${Utils.UrlParse(materials_btn.href).file.ext}`
-        };
+    // === Сбор данных ===
+    async collectLessonItems() {
+        let lessons_items = await Collectors.collectLessonsData(this.storage);
 
-        return materialsItem;
+        if (lessons_items) {
+            lessons_items.forEach(item => this.addItem(item));
+
+            // Запоминаем в localStorage сколько всего уроков в курсе
+            this.storage.set('cnt', this.cnt);
+        }
     }
 
-    collectLessons = () => {
-        let author = document.querySelector('.hero-source').textContent;
+    async collectMaterials() {
+        try {
+            let material_item = await Collectors.collectMaterials(this.storage, this.cnt, this.getCourseDisplayName);
+            if (material_item) this.addItem(material_item);
+        } catch (err) {}
+    }
+
+    addItem(item) {
+        this.json.lesson_items.push(item);
+    }
+
+    setCourseName(course_name) {
+        this.json.course_name = course_name;
+    }
+
+    setCourseDisplayName(display_name) {
+        this.json.course_display_name = display_name;
+    }
+
+    collectLessons = async () => {
+        let course_name = Utils.UrlParse(document.location.href);
+        course_name = course_name.path.pop();
+        this.setCourseName(course_name);
+
+        this.storage = new SStorage(course_name, {});
+
         let course_display_name = document.querySelector('h1.hero-title').textContent;
-        let course_name = Utils.UrlParse(document.location.href).path.pop();
+        this.setCourseDisplayName(course_display_name);
 
-        let result = {
-            author,
-            course_display_name,
-            course_name,
-            lessons: []
-        };
+        // Собрать айтемы списка уроков
+        await this.collectLessonItems();
+        // Собрать айтем материалов курса
+        await this.collectMaterials();
 
-        let lessonsEl = this.lessonsListEl.querySelectorAll('.lessons-item');
-        lessonsEl.forEach(lesson => {
-            let url = lesson.querySelector('[itemprop="url"]').getAttribute('href');
-
-            let name = '';
-            name += lesson.querySelector('.lessons-title').textContent;
-            name += ' ';
-            name += lesson.querySelector('.lessons-name').textContent;
-            name += '.';
-            name += Utils.UrlParse(url).file.ext;
-
-            result.lessons.push({ [url]: Utils.fileNameNormalize(name) });
-        });
-
-        result.lessons.push(this.collectMaterials(Utils.fileNameNormalize(course_name)));
-
-        console.log(result);
-        Download(JSON.stringify(result, ' ', 4), `${Utils.fileNameNormalize(course_name)}.json`, 'application/json');
+        Download(
+            JSON.stringify(this.json, ' ', 4),
+            `${Utils.fileNameNormalize(course_display_name)}.json`,
+            'application/json'
+        );
     };
 
     init() {
-        this.lessonsListEl = document.querySelector('#lessons-list');
         this.createBtn();
     }
 
