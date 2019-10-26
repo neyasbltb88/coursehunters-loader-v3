@@ -11,6 +11,9 @@ export default class LessonsCollector {
             lesson_items: []
         };
 
+        this.btn = null;
+        this.btnLoader = null;
+
         this.init();
     }
 
@@ -23,13 +26,29 @@ export default class LessonsCollector {
     }
 
     createBtn() {
+        if (this.btn) return;
+
         this.btn = document.createElement('button');
+        this.btn.id = 'lessons-collector';
         this.btn.className = 'btn mt-20 ml-20';
         this.btn.textContent = 'Скачать json с уроками';
         this.btn.addEventListener('click', this.collectLessons);
 
         let lessonsToggleBtn = document.querySelector('#lessons-toggle');
         lessonsToggleBtn.after(this.btn);
+    }
+
+    createBtnLoader() {
+        if (this.btnLoader) return;
+
+        this.btnLoader = document.createElement('a');
+        this.btnLoader.id = 'lessons-loader';
+        this.btnLoader.className = 'btn mt-20 ml-20';
+        this.btnLoader.textContent = 'Перейти на страницу скачивания';
+        this.btnLoader.href = 'https://neyasbltb88.github.io/coursehunters-loader-v3/';
+        this.btnLoader.target = '_blank';
+
+        this.btn.after(this.btnLoader);
     }
 
     // === Сбор данных ===
@@ -78,6 +97,8 @@ export default class LessonsCollector {
             `${Utils.fileNameNormalize(course_display_name)}.json`,
             'application/json'
         );
+
+        this.createBtnLoader();
     };
 
     init() {
@@ -85,6 +106,14 @@ export default class LessonsCollector {
     }
 
     destroy() {
-        this.btn.remove();
+        if (this.btn) {
+            this.btn.remove();
+            this.btn = null;
+        }
+
+        if (this.btnLoader) {
+            this.btnLoader.remove();
+            this.btnLoader = null;
+        }
     }
 }
