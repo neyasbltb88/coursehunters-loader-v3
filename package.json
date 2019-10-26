@@ -5,6 +5,8 @@
     "scripts": {
         "dev": "cross-env NODE_ENV=development webpack-dev-server",
         "build": "cross-env NODE_ENV=production webpack",
+        "predeploy": "npm run build",
+        "deploy": "gh-pages -d dist",
         "dev:client": "cross-env NODE_ENV=development webpack-dev-server --config hot/webpack.config.js",
         "build:client": "cross-env NODE_ENV=production webpack --config hot/webpack.config.js && rm index.html",
         "clear": "rm -r dist/ && rm stats.json"
@@ -17,11 +19,9 @@
     ],
     "author": "neyasbltb_88",
     "license": "ISC",
-    "browserslist": {
-        "development": [
-            "last 1 Chrome version"
-        ]
-    },
+    "browserslist": [
+        "last 1 Chrome version"
+    ],
     "devDependencies": {
         "@babel/core": "^7.6.3",
         "@babel/plugin-proposal-class-properties": "^7.5.5",
@@ -34,6 +34,7 @@
         "cross-env": "^6.0.3",
         "css-loader": "^3.2.0",
         "file-loader": "^4.2.0",
+        "gh-pages": "^2.1.1",
         "html-webpack-plugin": "^3.2.0",
         "node-sass": "^4.12.0",
         "raw-loader": "^3.1.0",
