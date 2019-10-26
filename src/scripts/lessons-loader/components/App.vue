@@ -190,13 +190,8 @@ export default {
                 this.updateItem(lesson);
             });
         },
-        loadedJsonHandler(json) {
-            this.setCourseName(json.course_name);
-            this.setCourseDisplayName(json.course_display_name);
-            json.lesson_items.forEach(item => this.addItem(item));
-
-            this.setStorage(new SStorage(this.getCourseName, {}));
-            this.storage.set('cnt', this.cnt);
+        loadedJsonHandler() {
+            console.log(`JSON с курсом "${this.getCourseDisplayName}" загружен успешно`);
         }
         // --- Обработчики ---
     }

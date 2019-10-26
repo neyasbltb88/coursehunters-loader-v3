@@ -1,16 +1,15 @@
 import Download from 'downloadjs';
 import Utils from '../utils';
-import SStorage from '../sstorage';
 import Collectors from './collectors';
 
 export default class LessonsCollector {
     constructor() {
         this.json = {
+            url: window.location.href,
             course_name: '',
             course_display_name: '',
             lesson_items: []
         };
-        this.storage = null;
 
         this.init();
     }
@@ -35,19 +34,16 @@ export default class LessonsCollector {
 
     // === Сбор данных ===
     async collectLessonItems() {
-        let lessons_items = await Collectors.collectLessonsData(this.storage);
+        let lessons_items = await Collectors.collectLessonsData();
 
         if (lessons_items) {
             lessons_items.forEach(item => this.addItem(item));
-
-            // Запоминаем в localStorage сколько всего уроков в курсе
-            this.storage.set('cnt', this.cnt);
         }
     }
 
     async collectMaterials() {
         try {
-            let material_item = await Collectors.collectMaterials(this.storage, this.cnt, this.getCourseDisplayName);
+            let material_item = await Collectors.collectMaterials(this.cnt, this.getCourseDisplayName);
             if (material_item) this.addItem(material_item);
         } catch (err) {}
     }
@@ -68,8 +64,6 @@ export default class LessonsCollector {
         let course_name = Utils.UrlParse(document.location.href);
         course_name = course_name.path.pop();
         this.setCourseName(course_name);
-
-        this.storage = new SStorage(course_name, {});
 
         let course_display_name = document.querySelector('h1.hero-title').textContent;
         this.setCourseDisplayName(course_display_name);
