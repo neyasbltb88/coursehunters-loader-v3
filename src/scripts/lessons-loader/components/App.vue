@@ -3,7 +3,7 @@
         <div class="container">
             <h2 class="standard-title">Скачать курс</h2>
 
-            <ChangeJson @loaded="loadedJsonHandler" />
+            <ChangeJson @loaded="loadedJsonHandler" @clearState="clearStateHandler" />
 
             <LessonsList />
 
@@ -192,6 +192,9 @@ export default {
         },
         loadedJsonHandler() {
             console.log(`JSON с курсом "${this.getCourseDisplayName}" загружен успешно`);
+        },
+        clearStateHandler() {
+            this.loadingEnd();
         }
         // --- Обработчики ---
     }

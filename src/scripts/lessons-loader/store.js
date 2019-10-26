@@ -19,6 +19,12 @@ export default new Vuex.Store({
 
     // commit
     mutations: {
+        clearState(state) {
+            state.course_name = '';
+            state.course_display_name = '';
+            state.lesson_items = [];
+            state.loading = false;
+        },
         setStorage(state, storage) {
             state.storage = storage;
         },

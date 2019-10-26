@@ -1,10 +1,19 @@
 <template>
     <div class="change-json-wrap">
-        <input type="file" id="change-json" class="change-json-input" @change="changeJsonHandler" />
-        <label for="change-json" class="change-json-label">
-            <strong class="change-json-btn btn">Выберите JSON с уроками курса</strong>
-            <span class="change-json-course-name hero-description">{{nameDescription}}</span>
-        </label>
+        <input
+            type="file"
+            accept=".json"
+            id="change-json"
+            class="change-json-input"
+            @change="changeJsonHandler"
+        />
+        <div class="change-json-label-wrap">
+            <label for="change-json" class="change-json-label">
+                <strong class="change-json-btn btn">Выберите JSON с уроками курса</strong>
+                <span class="change-json-course-name hero-description">{{nameDescription}}</span>
+            </label>
+        </div>
+        <button class="change-json-clear-btn btn" @click="clearHandler">Сброс</button>
     </div>
 </template>
 
@@ -16,15 +25,23 @@ export default {
     name: 'ChangeJson',
     data() {
         return {
-            nameDescription: ''
+            jsonError: ''
         };
     },
     computed: {
-        ...mapGetters(['cnt', 'getCourseDisplayName'])
+        ...mapGetters(['cnt', 'getCourseName', 'getCourseDisplayName']),
+        nameDescription() {
+            return this.jsonError ? this.jsonError : this.getCourseDisplayName;
+        }
     },
     methods: {
-        ...mapMutations(['setStorage', 'setCourseName', 'setCourseDisplayName', 'addItem', 'setContent']),
+        ...mapMutations(['setStorage', 'clearState', 'setCourseName', 'setCourseDisplayName', 'addItem', 'setContent']),
 
+        clearHandler() {
+            this.$emit('clearState');
+
+            this.clearState();
+        },
         changeJsonHandler({ target }) {
             if (target.files.length > 0) {
                 let fileReader = new FileReader();
@@ -38,6 +55,13 @@ export default {
         fileReaderHandler(result) {
             try {
                 let json = JSON.parse(result);
+
+                if (json.course_name !== this.getCourseName) {
+                    this.clearHandler();
+                } else {
+                    return;
+                }
+
                 let storage = new SStorage(json.course_name, {});
                 this.setStorage(storage);
                 this.setCourseName(json.course_name);
@@ -55,11 +79,11 @@ export default {
 
                 storage.set('cnt', this.cnt);
 
-                this.nameDescription = json.course_display_name;
+                this.jsonError = '';
 
                 this.$emit('loaded');
             } catch (err) {
-                this.nameDescription = 'Не правильный JSON';
+                this.jsonError = 'Не правильный JSON';
             }
         }
     }
@@ -70,6 +94,7 @@ export default {
 .change-json
     &-wrap
         margin: 20px 0
+        display: flex
     &-input
         width: 0.1px
         height: 0.1px
@@ -77,10 +102,18 @@ export default {
         overflow: hidden
         position: absolute
         z-index: -1
+    &-label-wrap
+        flex-grow: 1
     &-label
         display: inline-flex
         align-items: center
+        cursor: pointer
     &-btn
+        height: 100%
+        cursor: pointer
+        &.btn
+            display: inline-flex
+            align-items: center
     &-course-name
         padding: 0 20px
         &.hero-description
