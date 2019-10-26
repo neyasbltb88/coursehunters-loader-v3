@@ -2,16 +2,20 @@
     <div id="app" class="coursehunters-loader">
         <div class="container">
             <h2 class="standard-title">Скачать курс</h2>
-            <LessonsList></LessonsList>
+
+            <ChangeJson @loaded="loadedJsonHandler" />
+
+            <LessonsList />
+
             <div class="coursehunters-loader_controls">
                 <div class="coursehunters-loader_columns-3 jc_flex-start">
-                    <LoadBtn @btnClick="btnClickHandler"></LoadBtn>
+                    <LoadBtn @btnClick="btnClickHandler" />
                 </div>
                 <div class="coursehunters-loader_columns-3 jc_center">
-                    <MasterCheckbox></MasterCheckbox>
+                    <MasterCheckbox />
                 </div>
                 <div class="coursehunters-loader_columns-3 jc_flex-end">
-                    <ClearHistoryBtn @clearHistory="clearHistoryHandler"></ClearHistoryBtn>
+                    <ClearHistoryBtn @clearHistory="clearHistoryHandler" />
                 </div>
             </div>
         </div>
@@ -20,16 +24,16 @@
 
 <script>
 import { mapMutations, mapGetters, mapActions } from 'vuex';
+import ChangeJson from './ChangeJson.vue';
 import LessonsList from './LessonsList.vue';
 import LoadBtn from './LoadBtn.vue';
 import MasterCheckbox from './MasterCheckbox.vue';
 import ClearHistoryBtn from './ClearHistoryBtn.vue';
 
-import Collectors from '../scripts/collectors';
-
 export default {
     name: 'app',
     components: {
+        ChangeJson,
         LessonsList,
         LoadBtn,
         MasterCheckbox,
@@ -37,49 +41,21 @@ export default {
     },
 
     computed: {
-        ...mapGetters(['cnt', 'isLoading', 'getItems', 'getCourseDisplayName'])
+        ...mapGetters(['storage', 'cnt', 'isLoading', 'getItems', 'getCourseName', 'getCourseDisplayName'])
     },
     methods: {
         ...mapMutations([
+            'setStorage',
             'setCourseName',
             'setCourseDisplayName',
-            'addItem', 
-            'masterLoading', 
-            'updateItem', 
+            'addItem',
+            'masterLoading',
+            'updateItem',
             'setLoaded',
             'setIsLoading',
-            'setContent',
+            'setContent'
         ]),
-        ...mapActions([
-            'getItem',
-        ]),
-
-        // === Сбор данных ===
-        async collectLessonItems() {
-            let lessons_items = await this.Collectors.collectLessonsData(this.storage);
-
-            if(lessons_items) {
-                lessons_items.forEach(item => this.addItem(item));
-
-                // Запоминаем в localStorage сколько всего уроков в курсе
-                this.storage.set('cnt', this.cnt);
-            }
-        },
-        async collectMaterials() {
-            try {
-                let material_item = await this.Collectors.collectMaterials(this.storage, this.cnt, this.getCourseDisplayName);
-                if(material_item) this.addItem(material_item);
-            } catch(err) {}
-        },
-        async collectInfoPage() {
-            try {
-                let info_page = await this.Collectors.collectInfoPage(this.storage, this.cnt, this.getCourseDisplayName);
-                if(info_page) this.addItem(info_page);
-            } catch(err) {}
-
-            // window.Downloader(new Blob([info_page]), window.Utils.fileNameNormalize('Инфо о курсе - ' + this.getCourseDisplayName + '.html'), 'text/html');
-        },
-        // --- Сбор данных ---
+        ...mapActions(['getItem']),
 
         // === Загрузка уроков ===
         loadingStart() {
@@ -103,7 +79,7 @@ export default {
                 // Те уроки, что уже были скачены на момент остановки процесса загрузки,
                 // будут считаться ранее скаченными(как восстановленные из localStorage),
                 // если начать новую загрузку
-                if(lesson.is_loaded) {
+                if (lesson.is_loaded) {
                     lesson.was_loaded = true;
                 }
 
@@ -120,9 +96,9 @@ export default {
 
             // Запоминаем в localStorage индекс и размер скаченного урока
             this.storage.set(lesson.storage_name, lesson.total);
-            this.updateItem(lesson);            
+            this.updateItem(lesson);
         },
-        loadingProgress(index, {loaded}) {
+        loadingProgress(index, { loaded }) {
             this.setLoaded({ index, loaded });
         },
         async loadingLesson(lesson) {
@@ -143,27 +119,31 @@ export default {
                 this.setContent({ index, content });
 
                 loded_event = {
-                    target: {response: content}
+                    target: { response: content }
                 };
 
-            // Если у айтема есть url
-            } else if(lesson.url) {
+                // Если у айтема есть url
+            } else if (lesson.url) {
                 try {
-                    loded_event = await window.Loader.request(lesson.url, {
-                        responseType: 'arraybuffer',
-                    }, this.loadingProgress.bind(this, index));
+                    loded_event = await window.Loader.request(
+                        lesson.url,
+                        {
+                            responseType: 'arraybuffer'
+                        },
+                        this.loadingProgress.bind(this, index)
+                    );
                 } catch (error) {
                     this.loadingEnd();
                     return false;
                 }
             }
 
-            if(loded_event) this.loadingSave(lesson, loded_event);
+            if (loded_event) this.loadingSave(lesson, loded_event);
             this.loadingLoop();
         },
         loadingLoop() {
             let index;
-            let lessons = this.getItems;            
+            let lessons = this.getItems;
 
             // Поиск первого попавшегося урока, отмеченного для скачивания
             for (let i = 0; i < lessons.length; i++) {
@@ -184,7 +164,7 @@ export default {
 
         // === Обработчики ===
         btnClickHandler() {
-            if(!this.isLoading) {
+            if (!this.isLoading) {
                 this.loadingStart();
             } else {
                 this.loadingEnd();
@@ -195,14 +175,14 @@ export default {
 
             // Запоминаем в localStorage сколько всего уроков в курсе
             let lessons_list = document.querySelectorAll('#lessons-list .lessons-item');
-            if(lessons_list) this.storage.set('cnt', lessons_list.length);
+            if (lessons_list) this.storage.set('cnt', lessons_list.length);
 
             let lessons = this.getItems;
             lessons.forEach(lesson => {
                 lesson.was_loaded = false;
                 lesson.is_loaded = false;
 
-                if(!lesson.is_loading) {
+                if (!lesson.is_loading) {
                     lesson.percent = 0;
                     lesson.loaded = 0;
                 }
@@ -210,38 +190,29 @@ export default {
                 this.updateItem(lesson);
             });
         },
-        // --- Обработчики ---
+        loadedJsonHandler(json) {
+            this.setCourseName(json.course_name);
+            this.setCourseDisplayName(json.course_display_name);
+            json.lesson_items.forEach(item => this.addItem(item));
 
-    },
-
-    async created() {
-        let course_name = window.Utils.UrlParse(document.location.href);
-        course_name = course_name.path.pop();        
-
-        this.setCourseName(course_name);
-        this.storage = window.storage_ = new window.SStorage(course_name, {});
-
-        let course_display_name = document.querySelector('h1.hero-title').textContent;
-        this.setCourseDisplayName(course_display_name);
-        
-        // Cобрать айтемы списока уроков
-        await this.collectLessonItems();
-        // Собрать айтем материалов курса
-        await this.collectMaterials();
-
-        await this.collectInfoPage()
-    },
-
-    data() {
-        return {
-            storage: null,
-            Collectors
+            this.setStorage(new SStorage(this.getCourseName, {}));
+            this.storage.set('cnt', this.cnt);
         }
+        // --- Обработчики ---
     }
-}
+};
 </script>
 
-<style scoped lang="sass">
+<style lang="sass">
+.jc_flex-start
+    justify-content: flex-start
+
+.jc_center
+    justify-content: center
+
+.jc_flex-end
+    justify-content: flex-end
+
 .coursehunters-loader_controls
     padding:
         top: 40px
@@ -256,13 +227,6 @@ export default {
     flex-basis: 33.33%
     flex-grow: 1
     display: flex
-
-.jc_flex-start
-    justify-content: flex-start
-.jc_center
-    justify-content: center
-.jc_flex-end
-    justify-content: flex-end
 
 
 </style>

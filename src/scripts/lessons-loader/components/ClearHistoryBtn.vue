@@ -1,9 +1,5 @@
 <template>
-    <a href="#"
-        @click.prevent="handlerClearHistory"
-    >
-        Очистить историю скачиваний
-    </a>
+    <a href="#" @click.prevent="handlerClearHistory">Очистить историю скачиваний</a>
 </template>
 
 <script>
@@ -13,5 +9,5 @@ export default {
             this.$emit('clearHistory');
         }
     }
-}
+};
 </script>

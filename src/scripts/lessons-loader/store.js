@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import Utils from './scripts/utils';
+import Utils from '^/utils';
 
 Vue.use(Vuex);
 
@@ -10,12 +10,18 @@ export default new Vuex.Store({
         course_display_name: '',
         lesson_items: [],
 
+        // Объект хранилища, работающий с localStorage
+        storage: null,
+
         // Общий флаг, показывающий, идет ли сейчас процесс загрузки
         loading: false
     },
 
     // commit
     mutations: {
+        setStorage(state, storage) {
+            state.storage = storage;
+        },
         setCourseName(state, name) {
             state.course_name = name;
         },
@@ -84,8 +90,14 @@ export default new Vuex.Store({
         }
     },
     getters: {
+        storage(state) {
+            return state.storage;
+        },
         cnt(state) {
             return state.lesson_items.length;
+        },
+        getCourseName(state) {
+            return state.course_name;
         },
         getCourseDisplayName(state) {
             return state.course_display_name;

@@ -1,10 +1,11 @@
 <template>
     <li class="lessons-item" @click="toggleChecked" :class="isActive ? 'active' : ''">
         <div class="lessons-head">
-            <input class="item_checked" type="checkbox" name="item_checked" 
-                v-model="is_checked"
-            >    
-            <span class="lessons-title" v-if="name_prefix">{{name_prefix}} {{is_loaded ? '(Скачен)': ''}}</span>
+            <input class="item_checked" type="checkbox" name="item_checked" v-model="is_checked" />
+            <span
+                class="lessons-title"
+                v-if="name_prefix"
+            >{{name_prefix}} {{is_loaded ? '(Скачен)': ''}}</span>
             <span class="empty"></span>
             <span class="lessons-duration" v-if="total|is_loaded">
                 <span v-if="is_loading">{{Utils.FileSize(loaded)}} /</span>
@@ -19,7 +20,7 @@
 
 <script>
 import { mapMutations } from 'vuex';
-import Utils from '../scripts/utils'
+import Utils from '^/utils';
 
 export default {
     props: {
@@ -35,7 +36,7 @@ export default {
     },
     computed: {
         isActive() {
-            if(this.is_checked && !this.is_loaded) {
+            if (this.is_checked && !this.is_loaded) {
                 return true;
             } else {
                 return false;
@@ -58,12 +59,12 @@ export default {
     data() {
         return {
             Utils
-        }
+        };
     }
-}
+};
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
 .lessons-item
     opacity: .4
     &.active

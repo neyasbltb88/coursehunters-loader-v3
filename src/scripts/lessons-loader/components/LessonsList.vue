@@ -1,8 +1,10 @@
 <template>
     <ul class="lessons-list course-wrap">
-        <ListItem v-for="item in lesson_items" v-bind="item"
-        :key="item.name_prefix + '_' + item.lesson_name" >
-        </ListItem>
+        <ListItem
+            v-for="item in lesson_items"
+            v-bind="item"
+            :key="item.name_prefix + '_' + item.lesson_name"
+        ></ListItem>
     </ul>
 </template>
 
@@ -15,13 +17,15 @@ export default {
         ListItem
     },
     computed: {
-        ...mapState(['lesson_items']),
-    },
-}
+        ...mapState(['lesson_items'])
+    }
+};
 </script>
 
-<style scoped lang="sass">
+<style lang="sass">
 .course-wrap
-    display: block
+    &.lessons-list
+        display: block
+        
 </style>
 

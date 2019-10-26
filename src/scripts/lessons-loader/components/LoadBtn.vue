@@ -1,22 +1,16 @@
 <template>
-        <button class="btn" 
-            :disabled="!hasChecked" 
-            :title="btnTitle"
-            @click="btnClick"
-        >
-            {{btnText}}
-        </button>
+    <button class="btn" :disabled="!hasChecked" :title="btnTitle" @click="btnClick">{{btnText}}</button>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-import Utils from '../scripts/utils'
+import Utils from '^/utils';
 
 export default {
     data() {
         return {
             Utils
-        }
+        };
     },
     computed: {
         ...mapGetters([
@@ -34,11 +28,11 @@ export default {
         btnTitle() {
             let title = '';
 
-            if(this.hasChecked && !this.isLoading) {
+            if (this.hasChecked && !this.isLoading) {
                 title = 'Начать скачивание выделенных уроков';
-            } else if(this.hasChecked && this.isLoading) {
+            } else if (this.hasChecked && this.isLoading) {
                 title = 'Остановить скачивание';
-            } else if(!this.hasChecked) {
+            } else if (!this.hasChecked) {
                 title = 'Нет отмеченных уроков для скачивания';
             }
 
@@ -46,13 +40,13 @@ export default {
         },
         btnText() {
             let text = '';
-            if(this.hasChecked) {
+            if (this.hasChecked) {
                 let total = this.Utils.FileSize(this.totalCheckedNotWasLoaded);
                 let loaded = this.Utils.FileSize(this.totalNotWasLoaded);
 
-                if(!this.isLoading) {
+                if (!this.isLoading) {
                     text = `Скачать: ${this.notWasLoadedCheckedCnt} / ${this.notLoadedCnt} (${total})`;
-                } else if(this.isLoading) {
+                } else if (this.isLoading) {
                     text = `Скачено: ${this.justLoadedCnt} / ${this.notWasLoadedCheckedCnt} (${loaded} / ${total})`;
                 }
             } else {
@@ -64,8 +58,8 @@ export default {
     },
     methods: {
         btnClick() {
-            this.$emit('btnClick')
+            this.$emit('btnClick');
         }
     }
-}
+};
 </script>

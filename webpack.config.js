@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 const CustomHotUpdateStrategy = require('webpack-custom-hot-update-strategy');
 const updateFetchEval = require('webpack-custom-hot-update-strategy/strategies/update/hotDownloadUpdateChunkFetchEval');
@@ -71,6 +72,7 @@ config = {
         new CustomHotUpdateStrategy({
             update: updateFetchEval
         }),
+        new VueLoaderPlugin(),
         new CopyPlugin([
             {
                 from: './index.html',
@@ -100,7 +102,12 @@ config = {
                 test: /\.vue$/,
                 loader: 'vue-loader',
                 options: {
-                    hotReload: true
+                    hotReload: true,
+                    loaders: {
+                        scss: 'vue-style-loader!css-loader!sass-loader', // <style lang="scss">
+                        // sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax' // <style lang="sass">
+                        sass: 'vue-style-loader!css-loader!sass-loader?indentWidth=4' // <style lang="sass">
+                    }
                 }
             },
             {
@@ -116,23 +123,22 @@ config = {
             },
             {
                 test: /\.css$/,
-                use: ['vue-style-loader', 'style-loader', 'css-loader']
+                use: ['vue-style-loader', 'css-loader']
             },
             {
                 test: /\.scss$/,
-                use: ['vue-style-loader', 'style-loader', 'css-loader', 'sass-loader']
+                use: ['vue-style-loader', 'css-loader', 'sass-loader']
             },
             {
                 test: /\.sass$/,
                 use: [
                     'vue-style-loader',
-                    'style-loader',
                     'css-loader',
                     {
                         loader: 'sass-loader',
                         options: {
                             sassOptions: {
-                                indentWidth: 4
+                                indentedSyntax: true
                             }
                         }
                     }
@@ -142,7 +148,10 @@ config = {
     },
 
     resolve: {
-        extensions: ['index.js', '.js', '*']
+        extensions: ['index.js', '.js', '*'],
+        alias: {
+            '^': path.resolve(__dirname, 'src/scripts/')
+        }
     }
 };
 
