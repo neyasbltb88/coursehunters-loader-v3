@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Coursehunter Loader</title>
+    </head>
+
+    <body>
+        <!-- Чтобы этот скрипт попал только на страницу coursehunter, и не выполнился на локальной -->
+        <noscript>
+            <script type="text/javascript" src="./lessons-collector.js"></script>
+        </noscript>
+
+        <!-- А этот скрипт выполнится на локальной странице, и не подгрузится на coursehunter -->
+        <script class="ignore" type="text/javascript" src="./lessons-loader.js"></script>
+    </body>
+</html>
