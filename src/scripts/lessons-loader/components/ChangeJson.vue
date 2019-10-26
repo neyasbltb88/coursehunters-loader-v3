@@ -84,6 +84,7 @@ export default {
                 this.$emit('loaded');
             } catch (err) {
                 this.jsonError = 'Не правильный JSON';
+                this.clearHandler();
             }
         }
     }
