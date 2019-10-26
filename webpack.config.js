@@ -77,6 +77,10 @@ config = {
             {
                 from: './index.html',
                 to: '../dist'
+            },
+            {
+                from: './scripts/lessons-loader/fonts',
+                to: '../dist/fonts'
             }
         ])
     ],

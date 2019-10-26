@@ -20,6 +20,7 @@
 <script>
 import { mapMutations, mapGetters } from 'vuex';
 import SStorage from '^/sstorage';
+import collectInfoPage from '../collect-info-page';
 
 export default {
     name: 'ChangeJson',
@@ -66,6 +67,12 @@ export default {
                 this.setStorage(storage);
                 this.setCourseName(json.course_name);
                 this.setCourseDisplayName(json.course_display_name);
+
+                let infoPageItem = collectInfoPage(json.lesson_items.length, json.course_display_name, json.url);
+                if (infoPageItem) {
+                    json.lesson_items.push(infoPageItem);
+                }
+
                 json.lesson_items.forEach(item => {
                     let restore_item_loaded = storage.get(item.storage_name);
                     item.total = restore_item_loaded ? +restore_item_loaded : item.total;
@@ -83,6 +90,8 @@ export default {
 
                 this.$emit('loaded');
             } catch (err) {
+                console.log(err);
+
                 this.jsonError = 'Не правильный JSON';
                 this.clearHandler();
             }

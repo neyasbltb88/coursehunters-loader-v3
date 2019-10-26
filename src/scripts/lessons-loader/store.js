@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import Utils from '^/utils';
+import InfoPageCollector from './info-page-collector';
 
 Vue.use(Vuex);
 
@@ -52,6 +53,9 @@ export default new Vuex.Store({
         updateItem(state, item) {
             state.lesson_items[item.index] = item;
         },
+        removeItem(state, index) {
+            state.lesson_items.splice(index, 1);
+        },
         // При обновлении количества скаченных байт,
         // автоматом вычисляется процент от размера файла
         setLoaded(state, { index, loaded }) {
@@ -72,8 +76,6 @@ export default new Vuex.Store({
 
             let content_length = Utils.StrBytes(content);
             state.lesson_items[index].total = content_length;
-            state.lesson_items[index].loaded = content_length;
-            state.lesson_items[index].percent = 100;
         }
     },
 
@@ -89,6 +91,24 @@ export default new Vuex.Store({
                 item.mime = response.target.getResponseHeader('Content-Type');
 
                 this.commit('updateItem', item);
+            } else if (item.storage_name === 'info' && item.collect_url) {
+                try {
+                    let collector = new InfoPageCollector(item.collect_url, store.getters.getCourseName);
+
+                    if (!item.is_loaded || !item.was_loaded) {
+                        let content = await collector.build();
+
+                        this.commit('setContent', { index: item.index, content });
+                    } else {
+                        item.collect_method = collector.build.bind(collector);
+
+                        this.commit('updateItem', item);
+                    }
+                } catch (err) {
+                    console.log(err);
+
+                    this.commit('removeItem', item.index);
+                }
             }
         },
         getItem(store, index) {

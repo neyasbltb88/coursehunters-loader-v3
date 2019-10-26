@@ -116,10 +116,13 @@ export default {
             if (!lesson.url && lesson.collect_method) {
                 // Вызов вложенного в айтем метода сбора контента
                 let content = await lesson.collect_method.call();
-                this.setContent({ index, content });
 
                 loded_event = {
                     target: { response: content }
+                };
+            } else if (!lesson.url && lesson.content) {
+                loded_event = {
+                    target: { response: lesson.content }
                 };
 
                 // Если у айтема есть url
