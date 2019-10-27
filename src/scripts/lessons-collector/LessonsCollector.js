@@ -1,9 +1,22 @@
 import Download from 'downloadjs';
 import Utils from '../utils';
 import Collectors from './collectors';
+import TaskLauncher from './task-launcher';
 
 export default class LessonsCollector {
     constructor() {
+        this.createBtnTask = {
+            name: 'createBtnTask',
+            condition: () => {
+                let lessonsToggle = document.querySelector('#lessons-toggle');
+                return lessonsToggle !== null;
+            },
+            callback: () => {
+                this.createBtn();
+            }
+        };
+        this.taskLauncher = new TaskLauncher([this.createBtnTask]);
+
         this.json = {
             url: window.location.href,
             course_name: '',
@@ -62,8 +75,10 @@ export default class LessonsCollector {
 
     async collectMaterials() {
         try {
-            let material_item = await Collectors.collectMaterials(this.cnt, this.getCourseDisplayName);
-            if (material_item) this.addItem(material_item);
+            let materials_item = await Collectors.collectMaterials(this.cnt, this.getCourseDisplayName);
+            if (materials_item.length > 0) {
+                materials_item.forEach(material => this.addItem(material));
+            }
         } catch (err) {}
     }
 
@@ -80,6 +95,13 @@ export default class LessonsCollector {
     }
 
     collectLessons = async () => {
+        this.json = {
+            url: window.location.href,
+            course_name: '',
+            course_display_name: '',
+            lesson_items: []
+        };
+
         let course_name = Utils.UrlParse(document.location.href);
         course_name = course_name.path.pop();
         this.setCourseName(course_name);
@@ -102,7 +124,7 @@ export default class LessonsCollector {
     };
 
     init() {
-        this.createBtn();
+        this.taskLauncher.run('createBtnTask');
     }
 
     destroy() {

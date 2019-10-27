@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import App from './components/App.vue';
 import store from './store';
-// import './style.sass';
 import './style.css';
 
 import Utils from '../utils';

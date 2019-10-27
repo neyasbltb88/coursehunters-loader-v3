@@ -1,22 +1,22 @@
 export default class Utils {
     // Фильтрует строки на предмет недопустимых символов для использования в качестве имени файла
     static fileNameNormalize(value) {
-        let new_value = value.trim().split("");
+        let new_value = value.trim().split('');
         let template = {
-            "\\": "_",
-            "/": "_",
-            ":": "-",
-            "*": "_",
-            "?": "7",
+            '\\': '_',
+            '/': '_',
+            ':': '-',
+            '*': '_',
+            '?': '7',
             '"': "'",
-            "<": "{",
-            ">": "}",
-            "|": " l "
+            '<': '{',
+            '>': '}',
+            '|': ' l '
         };
 
         new_value = new_value.map(char => template[char] || char);
 
-        return new_value.join("");
+        return new_value.join('');
     }
 
     // Возвращает расширение файла из пути к нему (https://site.com/code.zip -> .zip)
@@ -78,7 +78,7 @@ export default class Utils {
         size = +size;
         if (isNaN(size)) return false;
         let level_counter = 0;
-        let levels = ["Б", "КБ", "МБ", "ГБ", "ТБ"];
+        let levels = ['Б', 'КБ', 'МБ', 'ГБ', 'ТБ'];
 
         function check(size) {
             if (size > 1024 && level_counter < 4) {
@@ -102,27 +102,30 @@ export default class Utils {
 
     // Разбирает url-адрес на все возможные составляющие
     static UrlParse(url) {
-        // https://regex101.com/r/bcnNZG/2
-        var regex = /(http\:\/\/|https\:\/\/|ftp\:\/\/)(.*?\..*?\/)(.*\/)*(.*)(\/.*\.(.*))*/i;
+        // https://regex101.com/r/bcnNZG/3
+        var regex = /(http\:\/\/|https\:\/\/|ftp\:\/\/|file\:\/\/\/)(.*?\/)(.*\/)*(.*)(\/.*\.(.*))*/i;
         var result_obj = {};
 
         var result = url.match(regex);
 
         result_obj.schema = result[1];
         result_obj.host = result[2];
-        result_obj.path = result[3].split("/");
-        result_obj.path = result_obj.path.filter(function(item) {
-            return item.length > 0;
-        });
+
+        if (result[3]) {
+            result_obj.path = result[3].split('/');
+            result_obj.path = result_obj.path.filter(function(item) {
+                return item.length > 0;
+            });
+        }
 
         if (result[4]) {
-            var file_parts = result[4].split(".");
+            var file_parts = result[4].split('.');
 
             if (file_parts.length > 1) {
                 var ext = file_parts.pop();
-                var name = file_parts.join(".");
+                var name = file_parts.join('.');
                 result_obj.file = {
-                    fileName: name + "." + ext,
+                    fileName: name + '.' + ext,
                     name: name,
                     ext: ext
                 };
@@ -136,17 +139,17 @@ export default class Utils {
 
     // Принимает количество секунд, возвращает в человекопонятном формате
     static TimeNormalizer(time = 0, ms = false, template = false) {
-        if (typeof time !== "number" || time < 0) return false;
+        if (typeof time !== 'number' || time < 0) return false;
         let result_arr = [];
         let duration = time / 1000;
         let date_obj = {};
 
         let units = {
-            day: "д",
-            hour: "ч",
-            min: "мин",
-            sec: "с",
-            msec: "мс"
+            day: 'д',
+            hour: 'ч',
+            min: 'мин',
+            sec: 'с',
+            msec: 'мс'
         };
 
         let divide = {
@@ -167,35 +170,35 @@ export default class Utils {
         }
 
         let day = Math.floor(duration / divide.day);
-        filter("day", day);
+        filter('day', day);
         duration -= day * divide.day;
 
         let hour = Math.floor(duration / divide.hour);
-        filter("hour", hour);
+        filter('hour', hour);
         duration -= hour * divide.hour;
 
         let min = Math.floor(duration / divide.min);
-        filter("min", min);
+        filter('min', min);
 
         let sec = Math.floor(duration % 60);
         if ((!ms && !begin) || sec > 0) {
             begin = true;
-            filter("sec", sec);
+            filter('sec', sec);
         }
 
         let msec = Math.round(((duration % 60) - sec) * 1000);
         date_obj.msec = msec;
         if (ms || !begin) {
             begin = true;
-            filter("msec", msec);
+            filter('msec', msec);
         }
 
         if (template) {
             return result_arr;
         } else {
             return result_arr.reduce((sum, item, index) => {
-                return sum + `${index > 0 ? " " : ""}${item.value}${item.unit}`;
-            }, "");
+                return sum + `${index > 0 ? ' ' : ''}${item.value}${item.unit}`;
+            }, '');
         }
     }
 }

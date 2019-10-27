@@ -33,28 +33,37 @@ export default class Collectors {
     }
 
     static async collectMaterials(index, course_name) {
-        let materials_btn = document.querySelector('[title="Download course materials"]');
-        if (!materials_btn) return false;
+        let materials_btn = document.querySelectorAll('.container>a[title]');
+        if (materials_btn.length === 0) return false;
 
-        let material_item = {
-            index,
-            name_prefix: 'Материалы курса',
-            name_concat: ' - ',
-            lesson_name: Utils.fileNameNormalize(course_name),
-            storage_name: 'code',
-            url: materials_btn.href,
-            ext: Utils.UrlParse(materials_btn.href).file.ext,
-            content: null,
-            mime: null,
-            total: 0,
-            loaded: 0,
-            percent: 0,
-            is_checked: true,
-            is_loading: false,
-            is_loaded: false,
-            was_loaded: false
-        };
+        let materials = [];
 
-        return material_item;
+        materials_btn.forEach((material, idx) => {
+            let name_prefix = 'Материалы курса';
+            if (materials_btn.length > 1) name_prefix += ` [${idx + 1}]`;
+
+            let material_item = {
+                index: index + idx,
+                name_prefix,
+                name_concat: ' - ',
+                lesson_name: Utils.fileNameNormalize(course_name),
+                storage_name: Utils.UrlParse(material.href).file.name,
+                url: material.href,
+                ext: Utils.UrlParse(material.href).file.ext,
+                content: null,
+                mime: null,
+                total: 0,
+                loaded: 0,
+                percent: 0,
+                is_checked: true,
+                is_loading: false,
+                is_loaded: false,
+                was_loaded: false
+            };
+
+            materials.push(material_item);
+        });
+
+        return materials;
     }
 }
