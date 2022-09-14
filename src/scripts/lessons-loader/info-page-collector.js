@@ -23,7 +23,7 @@ export default class InfoPageCollector {
         };
 
         this.course_cover = `https://coursehunter.net/uploads/course_posters_/${this.course_name}.jpg`;
-        this.course_display_name = this.doc.querySelector('h1.hero-title').textContent;
+        this.course_display_name = this.doc.querySelector('h1.raw-title').textContent;
     }
 
     async resourceUrl2base64(url) {
@@ -70,15 +70,23 @@ export default class InfoPageCollector {
     async build() {
         await this.init();
 
+        const allExternalStyles = this.doc.querySelectorAll('head link[type="text/css"]');
+        const externalStyles = [...allExternalStyles].filter(el => el.href.includes('coursehunter'));
+
+        const bodyClasses = this.doc.body.className;
+
         return /* html */ `
         <!DOCTYPE html>
         <html lang="ru">
-        
+
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <meta http-equiv="X-UA-Compatible" content="ie=edge">
             <title>${this.doc.title}</title>
+
+            <!-- Подключение внешних стилей -->
+            ${externalStyles.map(el => el.outerHTML).join('\n')}
 
             <style>
                 /* Родные стили страницы */
@@ -177,14 +185,21 @@ export default class InfoPageCollector {
                         width: calc(100% + 60px);
                     }
                 }
+
+                /* Растягивает список уроков на всю ширину контейнера */
+                .main-content .player .player-right {
+                    max-width: none;
+                    flex-basis: auto;
+                    width: 100%;
+                }
             </style>
         </head>
 
-        <body>
-            
+        <body class="${bodyClasses}">
+
             <!-- Шапка. На градиенте хлебные крошки и заголовки -->
             ${await (async () => {
-                let header = this.doc.querySelector('.hero.hero-gradient').cloneNode(true);
+                let header = this.doc.querySelector('.gradient').cloneNode(true);
 
                 // Сделать активным пункт в хлебных крошках, указывающий на эту страницу
                 let breadcrumbs_active = header.querySelector('.breadcrumbs__a_active');
@@ -193,63 +208,26 @@ export default class InfoPageCollector {
                         <span itemprop="name">${this.course_display_name}</span>
                     </a>`;
 
-                // Сделать активной ссылку на все курсы автора
-                let hero_source = header.querySelector('.hero-source');
-                hero_source.innerHTML = /* html */ `
-                    <a class="hero-source breadcrumbs__a" href="${this.owner.url}">${this.owner.name}</a>`;
-
                 return header.outerHTML;
             })()}
 
             <!-- Основной блок с информацией -->
-            <div class="container">
-                ${await (async () => {
-                    // Блок с описанием курса
-                    let course_main_info = this.doc.querySelector('div.course-wrap').cloneNode(true);
-                    // Добавим в него обложку курса
-                    let course_cover = this.doc.createElement('img');
-                    course_cover.className = 'course-wrap-side-cover';
-                    // course_cover.src = await this.resourceUrl2base64(this.course_cover);
-                    course_cover.src = this.course_cover;
-                    course_main_info.appendChild(course_cover);
+            ${await (async () => {
+                // Блок с описанием курса
+                let course_main_info = this.doc.querySelector('.book-wrap').cloneNode(true);
 
-                    // Заголовок описания курса
-                    let course_description = course_main_info.querySelector('.course-wrap-description');
-                    let course_description_header = this.doc.createElement('h2');
-                    course_description_header.className = 'standard-title';
-                    course_description_header.textContent = 'Описание курса';
-                    course_description.insertBefore(course_description_header, course_description.firstChild);
+                return course_main_info.outerHTML;
+            })()}
 
-                    // Клонируем список уроков
-                    let lessons_list = this.doc.querySelector('#lessons-list').cloneNode(true);
-                    let lessons = Array.from(lessons_list.querySelectorAll('.lessons-item'));
-                    // Из уроков вырезаем прогресс-бары
-                    lessons = lessons.map(lesson => {
-                        let progress = lesson.querySelector('progress');
-                        progress && progress.remove();
-                        return lesson;
-                    });
+            <!-- Главный блок страницы с плеером -->
+            ${await (async () => {
+                const mainContent = this.doc.querySelector('.main-content').cloneNode(true);
 
-                    // Блок со списком уроков
-                    let video_info = this.doc.createElement('div');
-                    video_info.className = 'video_info';
-                    video_info.innerHTML = /* html */ ` <h2 class="standard-title" > Видео курса </h2>`;
-                    video_info.appendChild(lessons_list);
-                    course_main_info.appendChild(video_info);
+                // Удаление блока самого плеера, чтобы остался только список уроков
+                mainContent.querySelector('.player-left').remove();
 
-                    // Материалы курса
-                    let materials_info = this.doc.createElement('div');
-                    materials_info.className = 'materials_info';
-                    let materials = this.doc.querySelector('section.section-block.mb-20');
-                    if (materials) {
-                        materials.classList.remove('mb-20');
-                        materials_info.innerHTML = materials.outerHTML;
-                        course_main_info.appendChild(materials_info);
-                    }
-
-                    return course_main_info.outerHTML;
-                })()}  
-            </div>
+                return mainContent.outerHTML;
+            })()}
 
 </body>
 `;
