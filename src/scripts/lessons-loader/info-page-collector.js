@@ -1,4 +1,5 @@
 import fonts from './fonts';
+import infoPageStyle from './info-page-style';
 
 export default class InfoPageCollector {
     constructor(url, course_name) {
@@ -95,103 +96,8 @@ export default class InfoPageCollector {
                 /* Инлайновые шрифты */
                 ${await this.fontsCollector(fonts)}
 
-                /* Правки стилей под сохраненную страницу */
-                .hero-source .hero-source {
-                    font-weight: 600;
-                    opacity: .7;
-                    text-decoration: none;
-                }
-                .hero-source .hero-source:hover {
-                    opacity: 1;
-                    text-decoration: underline;
-                }
-
-                    /* Формирование описания курса + обложка курса */
-                .course-wrap {
-                    justify-content: space-around;
-                }
-                .standard-title {
-                    margin-top: 40px;
-                    margin-bottom: 20px;
-                }
-
-                .course-wrap-side-left {
-                    width: 100%;
-                    flex: 100% 0 0;
-                    order: 2;
-                }
-                .course-wrap-description {
-                    max-width: none;
-                    cursor: auto;
-                }
-                .course-wrap-side-right {
-                    width: 50%;
-                    flex: 50% 0 0;
-                    order: 1;
-                }
-                .course-wrap-side-cover {
-                    width: 360px;
-                    max-width: 50%;
-                    height: 220px;
-                    order: 0;
-                }
-                .video_info {
-                    order: 3;
-                    width: 100%;
-                }
-                .video_info .lessons-item {
-                    cursor: default;
-                }
-                .materials_info {
-                    order: 4;
-                    width: calc(100% + 60px);
-                    margin: 40px -30px -30px -30px;
-                }
-
-                @media screen and (max-width: 767px) {
-                    .course-wrap {
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                    }
-                    .course-wrap-side-right {
-                        width: 100%;
-                    }
-                    .course-wrap-side-cover {
-                        width: 60%;
-                        height: auto;
-                        margin-bottom: 20px;
-                    }
-                    .standard-title {
-                        margin: 20px 0;
-                    }
-                }
-                @media screen and (max-width: 414px) {
-                    .course-wrap-side-left {
-                        margin-bottom: 10px;
-                    }
-                    .course-wrap-side-cover {
-                        width: 100%;
-                    }
-                    .course-box-item {
-                        flex: 100% 0 0;
-                        width: 100%;
-                    }
-                    .course-box-item:last-child {
-                        margin-bottom: 0;
-                    }
-                    #lessons-list {
-                        margin: 0 -30px;
-                        width: calc(100% + 60px);
-                    }
-                }
-
-                /* Растягивает список уроков на всю ширину контейнера */
-                .main-content .player .player-right {
-                    max-width: none;
-                    flex-basis: auto;
-                    width: 100%;
-                }
+                /* Статические стили */
+                ${infoPageStyle}
             </style>
         </head>
 
@@ -229,7 +135,7 @@ export default class InfoPageCollector {
                 return mainContent.outerHTML;
             })()}
 
-</body>
+        </body>
 `;
     }
 }
