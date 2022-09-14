@@ -8,11 +8,12 @@ export default class LessonsCollector {
         this.createBtnTask = {
             name: 'createBtnTask',
             condition: () => {
-                let lessonsToggle = document.querySelector('#lessons-toggle');
+                let lessonsToggle = document.querySelector('.course-page-poster');
                 return lessonsToggle !== null;
             },
             callback: () => {
                 this.createBtn();
+                this.createBtnLoader();
             }
         };
         this.taskLauncher = new TaskLauncher([this.createBtnTask]);
@@ -43,12 +44,12 @@ export default class LessonsCollector {
 
         this.btn = document.createElement('button');
         this.btn.id = 'lessons-collector';
-        this.btn.className = 'btn mt-20 ml-20';
+        this.btn.className = 'btn book-wrap-btn mt-20';
         this.btn.textContent = 'Скачать json с уроками';
         this.btn.addEventListener('click', this.collectLessons);
 
-        let lessonsToggleBtn = document.querySelector('#lessons-toggle');
-        lessonsToggleBtn.after(this.btn);
+        let container = document.querySelector('.course-page-poster');
+        container.appendChild(this.btn);
     }
 
     createBtnLoader() {
@@ -56,7 +57,7 @@ export default class LessonsCollector {
 
         this.btnLoader = document.createElement('a');
         this.btnLoader.id = 'lessons-loader';
-        this.btnLoader.className = 'btn mt-20 ml-20';
+        this.btnLoader.className = 'btn book-wrap-btn mt-20';
         this.btnLoader.textContent = 'Перейти на страницу скачивания';
         this.btnLoader.href = 'https://neyasbltb88.github.io/coursehunters-loader-v3/';
         this.btnLoader.target = '_blank';
@@ -66,7 +67,8 @@ export default class LessonsCollector {
 
     // === Сбор данных ===
     async collectLessonItems() {
-        let lessons_items = await Collectors.collectLessonsData();
+        let courseId = window.course_id;
+        let lessons_items = await Collectors.collectLessonsData(courseId);
 
         if (lessons_items) {
             lessons_items.forEach(item => this.addItem(item));
@@ -106,7 +108,7 @@ export default class LessonsCollector {
         course_name = course_name.path.pop();
         this.setCourseName(course_name);
 
-        let course_display_name = document.querySelector('h1.hero-title').textContent;
+        let course_display_name = document.querySelector('h1.raw-title').textContent;
         this.setCourseDisplayName(course_display_name);
 
         // Собрать айтемы списка уроков
