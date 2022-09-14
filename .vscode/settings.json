@@ -1,0 +1,132 @@
+{
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "editor.rulers": [120],
+    "editor.formatOnSave": true,
+
+    "prettier.requireConfig": true,
+    "prettier.configPath": ".prettierrc",
+    "prettier.ignorePath": ".prettierignore",
+    "prettier.tabWidth": 4,
+    "prettier.quoteProps": "preserve",
+    "prettier.singleQuote": true,
+    "prettier.printWidth": 120,
+    "prettier.trailingComma": "none",
+    "prettier.endOfLine": "auto",
+    "prettier.arrowParens": "avoid",
+
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[vue]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[jsx]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[tsx]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[svg]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[gql]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[graphql]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[css]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[md]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+
+    "vetur.format.options.tabSize": 4,
+    "vetur.format.options.useTabs": false,
+    "vetur.format.defaultFormatter.html": "prettyhtml",
+    "vetur.format.defaultFormatter.css": "prettier",
+    "vetur.format.defaultFormatter.postcss": "prettier",
+    "vetur.format.defaultFormatter.scss": "prettier",
+    "vetur.format.defaultFormatter.less": "prettier",
+    "vetur.format.defaultFormatter.stylus": "stylus-supremacy",
+    "vetur.format.defaultFormatter.ts": "prettier",
+
+    "todo-tree.highlights.customHighlight": {
+        "TODO": {
+            "background": "#ffbd2a",
+            "foreground": "#FFF"
+        },
+        "FIXME": {
+            "background": "#f06292",
+            "foreground": "#FFF",
+            "icon": "alert",
+            "gutterIcon": true
+        },
+        "BUG:": {
+            "background": "#f00",
+            "foreground": "#FFF",
+            "icon": "bug",
+            "gutterIcon": true
+        },
+        "BUG": {
+            "background": "#f00",
+            "foreground": "#FFF",
+            "icon": "bug",
+            "gutterIcon": true
+        }
+    },
+    "todo-tree.general.tags": ["BUG:", "BUG", "FIXME", "TODO"],
+
+    "cSpell.language": "en,ru",
+    "cSpell.enableFiletypes": [
+        "asciidoc",
+        "c",
+        "cpp",
+        "csharp",
+        "css",
+        "git-commit",
+        "go",
+        "gql",
+        "handlebars",
+        "haskell",
+        "html",
+        "jade",
+        "java",
+        "javascript",
+        "javascriptreact",
+        "json",
+        "jsonc",
+        "latex",
+        "less",
+        "markdown",
+        "php",
+        "plaintext",
+        "python",
+        "pug",
+        "restructuredtext",
+        "rust",
+        "scala",
+        "scss",
+        "text",
+        "typescript",
+        "typescriptreact",
+        "yaml",
+        "yml",
+        "vue"
+    ]
+}
