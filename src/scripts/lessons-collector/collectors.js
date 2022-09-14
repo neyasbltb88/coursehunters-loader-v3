@@ -1,20 +1,32 @@
 import Utils from '../utils';
 
+const listSelector = '#lessons-list';
+const lessonItemSelector = '.lessons-item';
+const lessonItemPrefixSelector = '.lessons-title';
+const lessonItemNameSelector = '.lessons-name';
+
+const buildLessonsUrl = courseId => `/api/v1/course/${courseId}/lessons`;
+
 export default class Collectors {
-    static async collectLessonsData() {
-        let lessons_list = document.querySelector('#lessons-list');
-        let lesson_elems = lessons_list.querySelectorAll('.lessons-item');
+    static async collectLessonsData(courseId) {
+        let res = await axios.get(buildLessonsUrl(courseId));
+        let lesson_items = res.data;
+
+        let lessons_list = document.querySelector(listSelector);
+        let lesson_elems = lessons_list.querySelectorAll(lessonItemSelector);
         let result_items = [];
 
         lesson_elems.forEach((elem, index) => {
+            let lessonItem = lesson_items[index];
+
             let item = {
                 index: index,
-                name_prefix: Utils.fileNameNormalize(elem.querySelector('[itemprop="name"]').textContent),
+                name_prefix: Utils.fileNameNormalize(elem.querySelector(lessonItemPrefixSelector).textContent),
                 name_concat: ' ',
-                lesson_name: Utils.fileNameNormalize(elem.querySelector('.lessons-name').textContent),
+                lesson_name: Utils.fileNameNormalize(elem.querySelector(lessonItemNameSelector).textContent),
                 storage_name: index,
-                url: elem.querySelector('[itemprop="url"]').href,
-                ext: Utils.UrlParse(elem.querySelector('[itemprop="url"]').href).file.ext,
+                url: lessonItem.file,
+                ext: Utils.UrlParse(lessonItem.file).file.ext,
                 content: null,
                 mime: null,
                 total: 0,
