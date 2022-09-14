@@ -3,10 +3,13 @@ import Vuex from 'vuex';
 import Utils from '^/utils';
 import InfoPageCollector from './info-page-collector';
 
+import packageJSON from '@/package.json';
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
+        version: packageJSON.version,
         course_name: '',
         course_display_name: '',
         lesson_items: [],
@@ -116,6 +119,9 @@ export default new Vuex.Store({
         }
     },
     getters: {
+        version(state) {
+            return state.version;
+        },
         storage(state) {
             return state.storage;
         },

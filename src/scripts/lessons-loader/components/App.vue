@@ -1,7 +1,10 @@
 <template>
     <div id="app" class="coursehunters-loader">
         <div class="container">
-            <h2 class="standard-title">Скачать курс</h2>
+            <h2 class="standard-title">
+                Скачать курс
+                <span class="standard-title-version">(v{{ version }})</span>
+            </h2>
 
             <ChangeJson @loaded="loadedJsonHandler" @clearState="clearStateHandler" />
 
@@ -41,7 +44,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters(['storage', 'cnt', 'isLoading', 'getItems', 'getCourseName', 'getCourseDisplayName'])
+        ...mapGetters(['version', 'storage', 'cnt', 'isLoading', 'getItems', 'getCourseName', 'getCourseDisplayName'])
     },
     methods: {
         ...mapMutations([
@@ -205,6 +208,10 @@ export default {
 </script>
 
 <style lang="sass">
+.standard-title-version
+    font-size: 1rem
+    color: rgba(47, 47, 47, 0.4)
+
 .jc_flex-start
     justify-content: flex-start
 
@@ -228,6 +235,4 @@ export default {
     flex-basis: 33.33%
     flex-grow: 1
     display: flex
-
-
 </style>
