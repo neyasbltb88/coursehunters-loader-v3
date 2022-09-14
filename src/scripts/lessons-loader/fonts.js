@@ -1,7 +1,7 @@
 export default [
     {
         name: 'ch',
-        url: './fonts/icons/ch.ttf',
+        url: './fonts/icons/ch.woff',
         weight: 400,
         style: 'normal'
     },
