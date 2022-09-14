@@ -1,6 +1,6 @@
 {
     "name": "coursehunters-loader",
-    "version": "1.0.0",
+    "version": "3.1.0",
     "description": "Проект для скачивания курсов с coursehunter.net",
     "scripts": {
         "dev": "cross-env NODE_ENV=development webpack-dev-server",
