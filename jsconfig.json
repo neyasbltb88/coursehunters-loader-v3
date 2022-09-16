@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"],
+            "^/*": ["src/scripts/*"],
+        }
+    },
+    "exclude": [
+        "/dist",
+        "node_modules",
+        "./node_modules/**",
+        "test",
+        ".git",
+        "dist",
+        "dist*",
+        "**/dist/*",
+        "**/node_modules/*"
+    ],
+    "include": ["./src/**/*"]
+}

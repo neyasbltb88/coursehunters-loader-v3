@@ -3,7 +3,7 @@
         <div class="container">
             <h2 class="standard-title">
                 Скачать курс
-                <span class="standard-title-version">(v{{ version }})</span>
+                <a class="standard-title-version" :href="releaseHref" target="_blank">({{ releaseName }})</a>
             </h2>
 
             <ChangeJson @loaded="loadedJsonHandler" @clearState="clearStateHandler" />
@@ -44,7 +44,14 @@ export default {
     },
 
     computed: {
-        ...mapGetters(['version', 'storage', 'cnt', 'isLoading', 'getItems', 'getCourseName', 'getCourseDisplayName'])
+        ...mapGetters(['version', 'storage', 'cnt', 'isLoading', 'getItems', 'getCourseName', 'getCourseDisplayName']),
+
+        releaseName() {
+            return 'v' + this.version;
+        },
+        releaseHref() {
+            return 'https://github.com/neyasbltb88/coursehunters-loader-v3/releases/tag/' + this.releaseName;
+        }
     },
     methods: {
         ...mapMutations([
