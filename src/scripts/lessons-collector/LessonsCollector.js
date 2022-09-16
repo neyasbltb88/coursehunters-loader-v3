@@ -4,18 +4,39 @@ import Collectors from './collectors';
 import TaskLauncher from './task-launcher';
 import buildCourseInfoMd from './buildCourseInfoMd';
 
+const UIStyleContent = /* css */ `
+.lessons-collector-ui {
+    display: flex;
+    flex-wrap: wrap;
+    padding-bottom: 15px;
+}
+.lessons-collector-btn {
+    max-width: 300px;
+    margin-top: 15px;
+    margin-right: 15px;
+}
+
+@media only screen and (max-width : 860px) {
+    .lessons-collector-ui {
+        flex-direction: column;
+    }
+    .lessons-collector-btn {
+        max-width: none;
+        margin-right: 0;
+    }
+}
+`;
+
 export default class LessonsCollector {
     constructor() {
         this.createBtnTask = {
             name: 'createBtnTask',
             condition: () => {
-                let lessonsToggle = document.querySelector('.course-page-poster');
-                return lessonsToggle !== null;
+                let el = document.querySelector('.course-page-poster');
+                return el !== null;
             },
             callback: () => {
-                this.createBtn();
-                this.createBtnLoader();
-                this.createBtnCourseInfo();
+                this.createUI();
             }
         };
         this.taskLauncher = new TaskLauncher([this.createBtnTask]);
@@ -27,9 +48,7 @@ export default class LessonsCollector {
             lesson_items: []
         };
 
-        this.btn = null;
-        this.btnLoader = null;
-        this.btnCourseInfo = null;
+        this.UI = null;
 
         this.init();
     }
@@ -42,42 +61,55 @@ export default class LessonsCollector {
         return this.json.course_display_name;
     }
 
+    createUI() {
+        const infoItemsBlock = document.querySelector('.book-wrap .book-wrap-info');
+        if (this.UI || !infoItemsBlock) return;
+
+        const UI = document.createElement('div');
+        UI.className = 'lessons-collector-ui';
+        const UIStyle = document.createElement('style');
+        UIStyle.textContent = UIStyleContent;
+
+        const btn = this.createBtn();
+        const btnLoader = this.createBtnLoader();
+        const btnCourseInfo = this.createBtnCourseInfo();
+
+        UI.append(UIStyle, btn, btnLoader, btnCourseInfo);
+
+        infoItemsBlock.after(UI);
+
+        this.UI = UI;
+    }
+
     createBtn() {
-        if (this.btn) return;
+        const btn = document.createElement('button');
+        btn.id = 'lessons-collector';
+        btn.className = 'btn book-wrap-btn lessons-collector-btn';
+        btn.textContent = 'Скачать json с уроками';
+        btn.addEventListener('click', this.collectLessons);
 
-        this.btn = document.createElement('button');
-        this.btn.id = 'lessons-collector';
-        this.btn.className = 'btn book-wrap-btn mt-20';
-        this.btn.textContent = 'Скачать json с уроками';
-        this.btn.addEventListener('click', this.collectLessons);
-
-        let container = document.querySelector('.course-page-poster');
-        container.appendChild(this.btn);
+        return btn;
     }
 
     createBtnLoader() {
-        if (this.btnLoader) return;
+        const btnLoader = document.createElement('a');
+        btnLoader.id = 'lessons-loader';
+        btnLoader.className = 'btn book-wrap-btn lessons-collector-btn';
+        btnLoader.textContent = 'Перейти на страницу скачивания';
+        btnLoader.href = 'https://neyasbltb88.github.io/coursehunters-loader-v3/';
+        btnLoader.target = '_blank';
 
-        this.btnLoader = document.createElement('a');
-        this.btnLoader.id = 'lessons-loader';
-        this.btnLoader.className = 'btn book-wrap-btn mt-20';
-        this.btnLoader.textContent = 'Перейти на страницу скачивания';
-        this.btnLoader.href = 'https://neyasbltb88.github.io/coursehunters-loader-v3/';
-        this.btnLoader.target = '_blank';
-
-        this.btn.after(this.btnLoader);
+        return btnLoader;
     }
 
     createBtnCourseInfo() {
-        if (this.btnCourseInfo) return;
+        const btnCourseInfo = document.createElement('button');
+        btnCourseInfo.id = 'btn-course-info';
+        btnCourseInfo.className = 'btn book-wrap-btn lessons-collector-btn';
+        btnCourseInfo.textContent = 'Скачать информацию о курсе';
+        btnCourseInfo.addEventListener('click', this.collectCourseInfo);
 
-        this.btnCourseInfo = document.createElement('button');
-        this.btnCourseInfo.id = 'btn-course-info';
-        this.btnCourseInfo.className = 'btn book-wrap-btn mt-20';
-        this.btnCourseInfo.textContent = 'Скачать информацию о курсе';
-        this.btnCourseInfo.addEventListener('click', this.collectCourseInfo);
-
-        this.btnLoader.after(this.btnCourseInfo);
+        return btnCourseInfo;
     }
 
     // === Сбор данных ===
@@ -154,19 +186,9 @@ export default class LessonsCollector {
     }
 
     destroy() {
-        if (this.btn) {
-            this.btn.remove();
-            this.btn = null;
-        }
-
-        if (this.btnLoader) {
-            this.btnLoader.remove();
-            this.btnLoader = null;
-        }
-
-        if (this.btnCourseInfo) {
-            this.btnCourseInfo.remove();
-            this.btnCourseInfo = null;
+        if (this.UI) {
+            this.UI.remove();
+            this.UI = null;
         }
     }
 }
