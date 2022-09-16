@@ -2,6 +2,7 @@ import Download from 'downloadjs';
 import Utils from '../utils';
 import Collectors from './collectors';
 import TaskLauncher from './task-launcher';
+import buildCourseInfoMd from './buildCourseInfoMd';
 
 export default class LessonsCollector {
     constructor() {
@@ -14,6 +15,7 @@ export default class LessonsCollector {
             callback: () => {
                 this.createBtn();
                 this.createBtnLoader();
+                this.createBtnCourseInfo();
             }
         };
         this.taskLauncher = new TaskLauncher([this.createBtnTask]);
@@ -27,6 +29,7 @@ export default class LessonsCollector {
 
         this.btn = null;
         this.btnLoader = null;
+        this.btnCourseInfo = null;
 
         this.init();
     }
@@ -63,6 +66,18 @@ export default class LessonsCollector {
         this.btnLoader.target = '_blank';
 
         this.btn.after(this.btnLoader);
+    }
+
+    createBtnCourseInfo() {
+        if (this.btnCourseInfo) return;
+
+        this.btnCourseInfo = document.createElement('button');
+        this.btnCourseInfo.id = 'btn-course-info';
+        this.btnCourseInfo.className = 'btn book-wrap-btn mt-20';
+        this.btnCourseInfo.textContent = 'Скачать информацию о курсе';
+        this.btnCourseInfo.addEventListener('click', this.collectCourseInfo);
+
+        this.btnLoader.after(this.btnCourseInfo);
     }
 
     // === Сбор данных ===
@@ -125,6 +140,15 @@ export default class LessonsCollector {
         this.createBtnLoader();
     };
 
+    async collectCourseInfo() {
+        const courseInfo = await Collectors.collectCourseInfo();
+        const courseInfoMd = buildCourseInfoMd(courseInfo);
+        const courseDisplayName = document.querySelector('h1.raw-title').textContent;
+        console.log(courseInfoMd);
+
+        Download(courseInfoMd, `${Utils.fileNameNormalize(courseDisplayName)}.md`, 'text/markdown');
+    }
+
     init() {
         this.taskLauncher.run('createBtnTask');
     }
@@ -138,6 +162,11 @@ export default class LessonsCollector {
         if (this.btnLoader) {
             this.btnLoader.remove();
             this.btnLoader = null;
+        }
+
+        if (this.btnCourseInfo) {
+            this.btnCourseInfo.remove();
+            this.btnCourseInfo = null;
         }
     }
 }

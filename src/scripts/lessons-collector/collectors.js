@@ -8,6 +8,26 @@ const lessonItemNameSelector = '.lessons-name';
 const buildLessonsUrl = courseId => `/api/v1/course/${courseId}/lessons`;
 
 export default class Collectors {
+    static async collectCourseInfo() {
+        const url = location.href.replace(location.search, '');
+        const name = document.querySelector('h1.raw-title').textContent;
+        const posterUrl = document.querySelector('.book-wrap-img').src;
+        const infoItemsElems = document.querySelectorAll('.book-wrap-info .course-box-item');
+        const infoItems = [...infoItemsElems].map(el => {
+            const title = el.querySelector('.course-box-title').textContent.trim();
+            const value = el.querySelector('.course-box-value').textContent.trim();
+
+            return { title, value };
+        });
+
+        const descriptionEl = document.querySelector('.book-wrap-content .book-wrap-description').cloneNode(true);
+        const descriptionMore = descriptionEl.querySelector('.book-wrap-more');
+        if (descriptionMore) descriptionMore.remove();
+        const description = descriptionEl.textContent.trim();
+
+        return { url, name, posterUrl, infoItems, description };
+    }
+
     static async collectLessonsData(courseId) {
         let res = await axios.get(buildLessonsUrl(courseId));
         let lesson_items = res.data;
