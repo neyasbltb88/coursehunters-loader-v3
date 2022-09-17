@@ -4,6 +4,7 @@ const listSelector = '#lessons-list';
 const lessonItemSelector = '.lessons-item';
 const lessonItemPrefixSelector = '.lessons-title';
 const lessonItemNameSelector = '.lessons-name';
+const lessonItemDurationSelector = '.lessons-duration';
 
 const buildLessonsUrl = courseId => `/api/v1/course/${courseId}/lessons`;
 
@@ -44,6 +45,7 @@ export default class Collectors {
                 name_prefix: Utils.fileNameNormalize(elem.querySelector(lessonItemPrefixSelector).textContent),
                 name_concat: ' ',
                 lesson_name: Utils.fileNameNormalize(elem.querySelector(lessonItemNameSelector).textContent),
+                duration: elem.querySelector(lessonItemDurationSelector).textContent,
                 storage_name: index,
                 url: lessonItem.file,
                 ext: Utils.UrlParse(lessonItem.file).file.ext,
