@@ -1,4 +1,5 @@
 import Download from 'downloadjs';
+import saveDownload from '../saveDownload';
 import Utils from '../utils';
 import Collectors from './collectors';
 import TaskLauncher from './task-launcher';
@@ -178,7 +179,11 @@ export default class LessonsCollector {
         const courseDisplayName = document.querySelector('h1.raw-title').textContent;
         console.log(courseInfoMd);
 
-        Download(courseInfoMd, `${Utils.fileNameNormalize(courseDisplayName)}.md`, 'text/markdown');
+        const encoder = new TextEncoder();
+        const uint8Array = encoder.encode(courseInfoMd);
+        const blob = new Blob([uint8Array], { type: 'text/markdown' });
+
+        saveDownload(blob, `${Utils.fileNameNormalize(courseDisplayName)}.md`);
     }
 
     init() {
